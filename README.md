@@ -38,5 +38,3 @@ To start the example app, use the following command:
 ```bash
 npm run dev
 ```
-
-This will start a development server, and you can access the application in your browser at http://localhost:5173/.

@@ -1,0 +1,6 @@
+{
+    "eslint.workingDirectories": [
+        "express-example",
+        "express-example/frontend"
+    ]
+  }
