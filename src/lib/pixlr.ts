@@ -47,18 +47,17 @@ export class Editor extends Application {
         const baseUrl = options?.baseUrl ?? 'https://pixlr.com';        
 
         const ready = new Promise<MessagePort>((resolve, reject) => {
-            target.addEventListener('load', () => {
-                const { port1, port2 } = new MessageChannel();
+            const handler = (event: MessageEvent) => {                
+                if (event.origin !== baseUrl) return;
+                if (event.data?.op !== 'ready') return reject('unexpected message: ready not received');
+                if (event.ports.length !== 1) return reject('ready did not send a port');
+                
+                resolve(event.ports[0]);        
 
-                port1.onmessage = (event: MessageEvent) => {
-                    if (event.data?.op === 'connected') resolve(port1)
-                    else reject(new Error('Unexpectcd init message from Applicaton'))
-
-                    port1.onmessage = null;
-                };
-
-                target.contentWindow?.postMessage({ op: 'connect'}, baseUrl, [port2]);
-            }, { once: true });
+                window.removeEventListener('message', handler);
+            };
+            
+            window.addEventListener('message', handler);
         });
 
         const url = new URL(baseUrl);
@@ -67,10 +66,10 @@ export class Editor extends Application {
 
         target.src = url.toString();
 
-        // Wait for the site to post a message or fail after a minute
+        // Wait for the site to post a message or fail after 30 seconds
         const port = await Promise.race([
             ready,
-            timeout(10_000).then(() => { throw new Error('timeout') })
+            timeout(30_000).then(() => { throw new Error('timeout') })
         ]);
         
         return new Editor(port);
