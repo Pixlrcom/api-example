@@ -1,6 +1,7 @@
 import { createToken } from '$lib/token.server';
 import { redirect } from '@sveltejs/kit';
 import { writeFile, mkdir } from 'fs/promises';
+import type { PixlrPayloadJWT } from 'pixlr-sdk';
 
 async function upload(file: File) {
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -22,11 +23,11 @@ export const actions = {
             follow: true,
             openUrl: `${url.origin}/upload/${image.name}`,
             saveUrl: `${url.origin}/http?/save`
-        };
+        } as PixlrPayloadJWT;
 
         const token = await createToken(payload);
 
-        throw redirect(303, `https://pixlr.com/xpress/?token=${token}`);
+        throw redirect(303, `https://pixlr.com/express/?token=${token}`);
     },
 
     save: async ({ request }) => {

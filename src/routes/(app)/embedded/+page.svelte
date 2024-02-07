@@ -3,7 +3,8 @@
 
     import FileInput from "$lib/FileInput.svelte";
     import FileImage from "$lib/FileImage.svelte";
-    import { Editor } from "$lib/pixlr";
+    import { Editor } from "pixlr-sdk";
+
 
     let currentFiles: { open: boolean, file: File}[] = [];
     let frame: HTMLIFrameElement;

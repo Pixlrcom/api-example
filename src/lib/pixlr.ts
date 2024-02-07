@@ -2,40 +2,9 @@ type Message = { op: 'connect' }
              | { op: 'open', buffer: ArrayBuffer, name: string };
 
 abstract class  Application {
+    protected abstract getPathname(): string;
     protected constructor(protected port: MessagePort) {}
 
-    /**
-     * Open an image file
-     * This function an async generator, so it will produce new images everytime the user saves the opened image
-     * The iterator closes when the user closes the file in the editor
-     * @param file The file to open, should be an image file
-     */
-    public async *open(file: File) {
-        const buffer = await file.arrayBuffer();
-        const port = this.sendMessage({ op: 'open', buffer, name: file.name}, [buffer]);
-        
-        const iter = new MessageIterator(port);
-
-        for await (const message of iter) {
-            yield message.data as File;
-        }
-    }
-
-    private sendMessage(msg: Message, transfer: Transferable[]): MessagePort {
-        const { port1, port2 } = new MessageChannel();
-        this.port.postMessage(msg, [port2, ...transfer]);
-        return port1;
-    }
-}
-
-export interface OpenOptions {
-    baseUrl?: string,
-}
-
-/**
- * A proxy class to control an embeded Editor
- */
-export class Editor extends Application {
     /**
      * Open and connect to an instance of Pixlr editor in the target iframe
      * @param token JWT token to use for API access
@@ -61,7 +30,7 @@ export class Editor extends Application {
         });
 
         const url = new URL(baseUrl);
-        url.pathname = 'editor/';
+        url.pathname = this.prototype.getPathname();
         url.searchParams.append('token', token);
 
         target.src = url.toString();
@@ -74,8 +43,49 @@ export class Editor extends Application {
         
         return new Editor(port);
     }
+    /**
+     * Open an image file
+     * This function an async generator, so it will produce new images everytime the user saves the opened image
+     * The iterator closes when the user closes the file in the editor
+     * @param file The file to open, should be an image file
+     */
+    public async *open(file: File) {
+        const buffer = await file.arrayBuffer();
+        const port = this.sendMessage({ op: 'open', buffer, name: file.name}, [buffer]);
+        
+        const iter = new MessageIterator(port);
+
+        for await (const message of iter) {
+            yield message.data as File;
+        }
+    }
+
+    private sendMessage(msg: Message, transfer: Transferable[]): MessagePort {
+        const { port1, port2 } = new MessageChannel();
+        this.port.postMessage(msg, [port2, ...transfer]);
+        return port1;
+    }
+    
 }
 
+export interface OpenOptions {
+    baseUrl?: string,
+}
+
+/**
+ * A proxy class to control an embeded Editor
+ */
+export class Editor extends Application {
+    protected getPathname(): string {
+        return 'editor/';
+    }
+}
+
+export class Express extends Application {
+    protected getPathname(): string {
+        return 'express/';
+    }
+}
 function timeout(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
