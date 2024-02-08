@@ -19,7 +19,7 @@ To get API key and secret:
 
 1. Sign up for Pixlr: Visit Developer under My Account to create a key and secret pair.
 
-2. Update `src/lib/token.server.ts` with your key & secret. 
+2. Copy the file `.env.example` to `.env` and replace `CLIENT_KEY` and `CLIENT_SECRET` with your Pixlr API key and secret.
 
 3. Refer to the code in this repository for examples of how to make requests to the Pixlr API and handle the responses.
 
@@ -39,4 +39,4 @@ To start the example app, use the following command:
 npm run dev
 ```
 
-This will start a development server, and you can access the application in your browser at http://localhost:5173/.
+This will start a development server, and you can access the application in your browser at <http://localhost:5173/>.
