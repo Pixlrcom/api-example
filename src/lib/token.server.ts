@@ -1,5 +1,5 @@
 import { CLIENT_KEY, CLIENT_SECRET } from "$env/static/private";
-import { Token, type PixlrPayloadJWT } from "pixlr-sdk";
+import { Token, type PixlrPayloadJWT } from "@pixlrlte/pixlr-sdk";
 
 /**
  * Create a JWT token for our api call

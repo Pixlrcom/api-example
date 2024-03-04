@@ -1,7 +1,7 @@
 import { createToken } from '$lib/token.server';
 import { redirect } from '@sveltejs/kit';
 import { writeFile, mkdir } from 'fs/promises';
-import type { PixlrPayloadJWT } from 'pixlr-sdk';
+import type { PixlrPayloadJWT } from '@pixlrlte/pixlr-sdk';
 
 async function upload(file: File) {
     const buffer = Buffer.from(await file.arrayBuffer());
