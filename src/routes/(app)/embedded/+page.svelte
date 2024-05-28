@@ -22,9 +22,7 @@
 
     async function openFile(file: File, idx: number) {
         if (!editor) {
-            editor = await Editor.connect(data.token, frame, {
-                baseUrl: "https://pixlr.com",
-            });
+            editor = await Editor.connect(data.token, frame);
         }
 
         currentFiles[idx].open = true;
